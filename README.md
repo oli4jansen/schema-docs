@@ -5,6 +5,8 @@
 * Workflow should checkout this software repo and run script on the source repo
 * Enable workflows (Repo settings > Code and automation > Actions > General)
 * Set read/write (Repo settings > Code and automation > Actions > General > Workflow permissions)
+* Set Github pages "source" to "Github Actions" (Repo settings > Code and automation > Pages > Source)
+* 
 
 ## Installation
 
