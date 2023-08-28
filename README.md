@@ -1,20 +1,14 @@
 # schema-docs
 
-## TODO
-
-* Workflow should checkout this software repo and run script on the source repo
-* Enable workflows (Repo settings > Code and automation > Actions > General)
-* Set read/write (Repo settings > Code and automation > Actions > General > Workflow permissions)
-* Set Github pages "source" to "Github Actions" (Repo settings > Code and automation > Pages > Source)
-* 
-
 ## Installation
 
-1. Copy over `workflow.yml` to `/.github/workflows/`
+1. Create a Github repo with your JSON-LD application profile and schema files.
+2. Copy `workflow.yml` to `/.github/workflows/` in your repo.
+3. Go to `Repo settings > Code and automation > Actions > General` and enable workflows.
+4. Go to `Repo settings > Code and automation > Actions > General` and set "Workflow permissions" to read and write.
+5. Go to `Repo settings > Code and automation > Pages > Source` and set Github pages "source" to "Github Actions".
 
-...
-
-## Development
+## Development of this project
 
 `python -m venv venv`
 
