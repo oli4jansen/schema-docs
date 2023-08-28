@@ -1,5 +1,5 @@
 {
-    "schemas": ["./schemas", "./schema_ext-indischerfgoed.ttl"],
+    "schemas": ["./schemas", "./my_custom_schema.ttl"],
     "application_profile": "./jsonldcontext.jsonld",
     "html_template": "./schema-docs/template.html",
     "domain": ["http://www.w3.org/2000/01/rdf-schema#domain", "http://schema.org/domainIncludes"],
