@@ -278,7 +278,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
 def markdown_to_file(content: str, filename: str, config):
     path = os.path.join(config['output_folder'], filename)
     html = markdown.markdown(content, extensions=['tables'])
-    with open(config['html_template']) as template:
+    with open(config['html_template'] or './schema-docs/template.html') as template:
         write_to_file(path, template.read().replace('{CONTENT}', html).replace('{TITLE}', config['title']))
 
 
