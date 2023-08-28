@@ -36,7 +36,7 @@ def main():
     os.makedirs(config['output_folder'], exist_ok=True)
     # Generate the documentation pages
     generate_index_pages(application_profile, schemas, slugs, config)
-    generate_term_pages(application_profile, schemas, slugs, config, languages[config["language"]])
+    generate_term_pages(application_profile, schemas, slugs, config)
 
 
 def generate_index_pages(application_profile: ApplicationProfile, schemas: Schemas, slugs: Sluggifier, config):
