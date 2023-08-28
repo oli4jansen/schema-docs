@@ -36,7 +36,7 @@ def main():
     os.makedirs(config['output_folder'], exist_ok=True)
     # Generate the documentation pages
     generate_index_pages(application_profile, schemas, slugs, config)
-    generate_term_pages(application_profile, schemas, slugs, config)
+    generate_term_pages(application_profile, schemas, slugs, config, languages[config["language"]])
 
 
 def generate_index_pages(application_profile: ApplicationProfile, schemas: Schemas, slugs: Sluggifier, config):
@@ -61,7 +61,7 @@ def generate_index_pages(application_profile: ApplicationProfile, schemas: Schem
             res += _build_tree_component(sub_class, indent + '    ')
         return res
 
-    index_page_contents += f'#### {languages.language["CLASS_TREE"]}:\n\n'
+    index_page_contents += f'#### {languages[config["language"]]["CLASS_TREE"]}:\n\n'
 
     # For each of these, list their subclasses
     for root in sorted(roots, key = lambda r: application_profile.id_to_term[r]):
@@ -70,7 +70,7 @@ def generate_index_pages(application_profile: ApplicationProfile, schemas: Schem
 
 
 
-    markdown_to_file(index_page_contents, 'index.html')
+    markdown_to_file(index_page_contents, 'index.html', config)
 
 
     schemas_index_page_contents = ''
@@ -81,27 +81,27 @@ def generate_index_pages(application_profile: ApplicationProfile, schemas: Schem
 
         # Write the schema base IRI to the index page (unless the schema is 'unknown')
         if s in application_profile.schemas:
-            schemas_index_page_contents += f'{languages.language["THE_BASE_IRI_IS"]}: [{application_profile.schemas[s]}]({application_profile.schemas[s]})\n\n'
+            schemas_index_page_contents += f'{languages[config["language"]]["THE_BASE_IRI_IS"]}: [{application_profile.schemas[s]}]({application_profile.schemas[s]})\n\n'
 
         # Write all terms in this schema to the index page
         for term in sorted(terms):
             full = application_profile.mappings[term]['@id']
             schemas_index_page_contents += f' - [{term}]({slugs.transform(full)})\n'
 
-    markdown_to_file(schemas_index_page_contents, 'schemas.html')
+    markdown_to_file(schemas_index_page_contents, 'schemas.html', config)
 
 
-def generate_term_pages(application_profile: ApplicationProfile, schemas: Schemas, slugs: Sluggifier):
+def generate_term_pages(application_profile: ApplicationProfile, schemas: Schemas, slugs: Sluggifier, config):
     for terms in application_profile.get_terms_per_schema().values():
         # Generate the documentation page for this specific term
         for term in sorted(terms):
             full = application_profile.mappings[term]['@id']
             term_contents = term_to_markdown(
-                term, full, slugs, application_profile, schemas)
-            markdown_to_file(term_contents, slugs.transform(full) + '.html')
+                term, full, slugs, application_profile, schemas, config)
+            markdown_to_file(term_contents, slugs.transform(full) + '.html', config)
 
 """ Generates a Markdown page for a given term """
-def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile: ApplicationProfile, schemas: Schemas):
+def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile: ApplicationProfile, schemas: Schemas, config):
 
     """ Returns a Markdown link to the given IRI """
     def get_reference(iri: str) -> str:
@@ -140,13 +140,13 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
 
         # PROPERTIES
 
-        contents += f'### {languages.language["PROPERTIES_FROM"]} {term}\n\n'
+        contents += f'### {languages[config["language"]]["PROPERTIES_FROM"]} {term}\n\n'
 
         # All properties for this class that are also in the application profile
         properties = application_profile.filter(schemas.get_properties_with_class_as_domain(uri))
 
         if len(properties) > 0:
-            contents += f'{languages.language["PROPERTY"]} | {languages.language["EXPECTED_TYPE"]} | {languages.language["DESCRIPTION"]}\n--- | --- | ---\n'
+            contents += f'{languages[config["language"]]["PROPERTY"]} | {languages[config["language"]]["EXPECTED_TYPE"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | --- | ---\n'
 
             for prop in properties:
                 # Property (with link)
@@ -170,7 +170,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
             contents += '\n'
 
         else:
-            contents += f'{languages.language["NO_DIRECT_PROPERTIES"]}\n\n'
+            contents += f'{languages[config["language"]]["NO_DIRECT_PROPERTIES"]}\n\n'
 
         # INHERITED PROPERTIES
 
@@ -183,10 +183,10 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
             if len(indirect_properties) > 0:
                 super_class_term = application_profile.id_to_term[super_class] if super_class in application_profile.id_to_term else super_class
 
-                contents += f'### {languages.language["PROPERTIES_FROM"]} {super_class_term}\n\n'
+                contents += f'### {languages[config["language"]]["PROPERTIES_FROM"]} {super_class_term}\n\n'
 
 
-                contents += f'{languages.language["PROPERTY"]} | {languages.language["EXPECTED_TYPE"]} | {languages.language["DESCRIPTION"]}\n--- | --- | ---\n'
+                contents += f'{languages[config["language"]]["PROPERTY"]} | {languages[config["language"]]["EXPECTED_TYPE"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | --- | ---\n'
 
                 for prop in indirect_properties:
                     # Property (with link)
@@ -215,10 +215,10 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
 
         if len(range) > 0:
 
-            contents += f'### {languages.language["INSTANCES"]}\n\n'
-            contents += f'*{languages.language["INSTANCES_OF"]} {term} {languages.language["MAY_APPEAR_AS_VALUE"]}:*\n\n'
+            contents += f'### {languages[config["language"]]["INSTANCES"]}\n\n'
+            contents += f'*{languages[config["language"]]["INSTANCES_OF"]} {term} {languages[config["language"]]["MAY_APPEAR_AS_VALUE"]}:*\n\n'
 
-            contents += f'{languages.language["PROPERTY"]} | {languages.language["ON_TYPE"]} | {languages.language["DESCRIPTION"]}\n--- | --- | ---\n'
+            contents += f'{languages[config["language"]]["PROPERTY"]} | {languages[config["language"]]["ON_TYPE"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | --- | ---\n'
 
             for property in range:
                 ref = get_reference(str(property))
@@ -236,10 +236,10 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
         more_specific = application_profile.filter(schemas.get_subclasses(uri))
 
         if len(more_specific) > 0:
-            contents += f'### {languages.language["MORE_SPECIFIC_TYPES"]}\n\n'
-            contents += f'*{languages.language["THESE_CLASSES_ARE_SUBCLASSES_OF"]} {term}:*\n\n'
+            contents += f'### {languages[config["language"]]["MORE_SPECIFIC_TYPES"]}\n\n'
+            contents += f'*{languages[config["language"]]["THESE_CLASSES_ARE_SUBCLASSES_OF"]} {term}:*\n\n'
 
-            contents += f'{languages.language["CLASS"]} | {languages.language["DESCRIPTION"]}\n--- | ---\n'
+            contents += f'{languages[config["language"]]["CLASS"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | ---\n'
             for c in more_specific:
                 ref = get_reference(str(c))
                 label = '. '.join(schemas.get_comment(c)) or ''
@@ -253,8 +253,8 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
         domain = schemas.get_domain(uri, with_subclasses = False)
 
         if len(domain) > 0:
-            contents += f'### {languages.language["DOMAIN"]}\n'
-            contents += f'{languages.language["PROPERTY_USED_ON_THESE_TYPES"]}\n\n'
+            contents += f'### {languages[config["language"]]["DOMAIN"]}\n'
+            contents += f'{languages[config["language"]]["PROPERTY_USED_ON_THESE_TYPES"]}\n\n'
             for item in domain:
                 contents += ' - ' + \
                     get_reference(str(item)) + '\n'
@@ -263,8 +263,8 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
         range = schemas.get_range(uri)
 
         if len(range) > 0:
-            contents += f'### {languages.language["RANGE"]}\n'
-            contents += f'{languages.language["VALUES_ARE_OF_THESE_TYPES"]}\n\n'
+            contents += f'### {languages[config["language"]]["RANGE"]}\n'
+            contents += f'{languages[config["language"]]["VALUES_ARE_OF_THESE_TYPES"]}\n\n'
             for item in range:
                 contents += ' - ' + \
                     get_reference(str(item)) + '\n'
@@ -275,11 +275,11 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
 
 
 """ Saves a Markdown string as an HTML file """
-def markdown_to_file(content: str, filename: str):
-    path = os.path.join(languages.output['folder'], filename)
+def markdown_to_file(content: str, filename: str, config):
+    path = os.path.join(config['output_folder'], filename)
     html = markdown.markdown(content, extensions=['tables'])
-    with open(languages.input['html_template']) as template:
-        write_to_file(path, template.read().replace('{CONTENT}', html).replace('{TITLE}', languages.meta['title']))
+    with open(config['html_template']) as template:
+        write_to_file(path, template.read().replace('{CONTENT}', html).replace('{TITLE}', config['title']))
 
 
 if __name__ == "__main__":
