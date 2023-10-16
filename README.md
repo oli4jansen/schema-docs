@@ -23,7 +23,7 @@ The configuration file can contain the following keys:
 | `domain` | List of properties that define the domain of a property in your schemas. Especially useful when using schema.org, which defines domain using their own [domainIncludes](https://schema.org/rangeIncludes) property | `["http://www.w3.org/2000/01/rdf-schema#domain", "https://schema.org/domainIncludes"]` |
 | `range` | List of properties that define the range of a property in your schemas. Especially useful when using schema.org, which defines range using their own [rangeIncludes](https://schema.org/rangeIncludes) property | `["http://www.w3.org/2000/01/rdf-schema#range", "https://schema.org/rangeIncludes"]` |
 | `title` | The title to use on the index page and the header of the docs. | `Documentation for My Profile` |
-| `language` | | |
+| `language` | The language to use for the documentation. Currently available: `english` | `english` |
 | `html_template` | The HTML template file to use | `./template.html` |
 | `output_folder` | Path where the output HTML files will be outputted | `./doc` |
 
