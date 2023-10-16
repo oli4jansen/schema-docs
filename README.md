@@ -19,7 +19,7 @@ The configuration file can contain the following keys:
 | Name          | Description   | Example |
 | ------------- | ------------- | ------- |
 | `schemas`  | List of paths of schemas to take into account. If a directory is added, all files in that directory must be schemas and will be loaded. | `["./schemas", "./my_schema.ttl"]` |
-| `application_profile`  | Path to the application profile. For example: `./jsonldcontext.jsonld` |
+| `application_profile`  | Path to the application profile. | `./jsonldcontext.jsonld` |
 | `domain` | List of properties that define the domain of a property in your schemas. Especially useful when using schema.org, which defines domain using their own [domainIncludes](https://schema.org/rangeIncludes) property | `["http://www.w3.org/2000/01/rdf-schema#domain", "https://schema.org/domainIncludes"]` |
 | `range` | List of properties that define the range of a property in your schemas. Especially useful when using schema.org, which defines range using their own [rangeIncludes](https://schema.org/rangeIncludes) property | `["http://www.w3.org/2000/01/rdf-schema#range", "https://schema.org/rangeIncludes"]` |
 | `title` | The title to use on the index page and the header of the docs. | `Documentation for My Profile` |
