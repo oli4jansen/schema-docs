@@ -24,6 +24,9 @@ def main():
         data = f.read()
     config = json.loads(data)
 
+    if 'theme_color' not in config:
+        config['theme_color'] = '#0973ce'
+
     # Load application profile
     application_profile = ApplicationProfile(config['application_profile'])
     # Load schemas
@@ -279,7 +282,7 @@ def markdown_to_file(content: str, filename: str, config):
     path = os.path.join(config['output_folder'], filename)
     html = markdown.markdown(content, extensions=['tables'])
     with open(config['html_template'] or './schema-docs/template.html') as template:
-        write_to_file(path, template.read().replace('{CONTENT}', html).replace('{TITLE}', config['title']))
+        write_to_file(path, template.read().replace('{CONTENT}', html).replace('{TITLE}', config['title']).replace('{THEME_COLOR}', config['theme_color']))
 
 
 if __name__ == "__main__":
