@@ -245,7 +245,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
             contents += f'{languages[config["language"]]["CLASS"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | ---\n'
             for c in more_specific:
                 ref = get_reference(str(c))
-                label = '. '.join(schemas.get_comment(c).replace('\n', ' ')) or ''
+                label = '. '.join(schemas.get_comment(c)).replace('\n', ' ') or ''
                 contents += f"{ref} | {label} \n"
 
             contents += '\n\n\n'
