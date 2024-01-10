@@ -122,7 +122,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
 
     breadcrumbs = schemas.get_breadcrumbs(uri)
     for bc in breadcrumbs:
-        contents += ' > '.join([get_reference(str(c)) for c in bc]) + '\n'
+        contents += ' - ' + ' > '.join([get_reference(str(c)) for c in bc]) + '\n'
     contents += '\n'
 
     # HEADER
