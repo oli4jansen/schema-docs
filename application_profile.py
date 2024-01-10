@@ -4,6 +4,9 @@ import uuid
 from pyld import jsonld
 from rdflib import URIRef
 
+EMPTY_CONTEXT = {'_uuid': str(
+            uuid.uuid1()), 'processingMode': 'json-ld-1.1', 'mappings': {}}
+
 """
 Loads the application profile from a file and parses it into some
 usefuls dictionaries.
@@ -47,8 +50,16 @@ class ApplicationProfile():
         return str(iri) in self.id_to_term
 
     """ Filters a list of IRIs down to only those that are in the application profile """
-    def filter(self, iris: list[str | URIRef]) -> list[str]:
-        return [str(iri) for iri in iris if self.has(iri)]
+    def filter(self, iris: list[str | URIRef], relative_to_term: str | None = None) -> list[str]:
+        from_subcontext = []
+        if relative_to_term is not None and relative_to_term in self.mappings and '@context' in self.mappings[relative_to_term]:
+            subcontext = self.mappings[relative_to_term]['@context']
+            subcontext.update(self.schemas)
+            subcontext_mappings = self._get_mappings_from_context(subcontext)
+            ids_in_subcontext = [v['@id'] for k, v in subcontext_mappings.items() if k not in self.schemas]
+            from_subcontext = [str(iri) for iri in iris if str(iri) in ids_in_subcontext]
+
+        return list(set([str(iri) for iri in iris if self.has(iri)] + from_subcontext))
 
     def get_terms_per_schema(self):
         terms_per_schema = dict()
@@ -82,7 +93,5 @@ class ApplicationProfile():
 
         return terms_per_schema
     
-    def _get_mappings_from_context(self, data):
-        active_ctx = {'_uuid': str(
-            uuid.uuid1()), 'processingMode': 'json-ld-1.1', 'mappings': {}}
+    def _get_mappings_from_context(self, data, active_ctx = EMPTY_CONTEXT):
         return jsonld.JsonLdProcessor().process_context(active_ctx, data, {})['mappings']

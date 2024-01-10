@@ -146,7 +146,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
         contents += f'### {languages[config["language"]]["PROPERTIES_FROM"]} {term}\n\n'
 
         # All properties for this class that are also in the application profile
-        properties = application_profile.filter(schemas.get_properties_with_class_as_domain(uri))
+        properties = application_profile.filter(schemas.get_properties_with_class_as_domain(uri), relative_to_term=term)
 
         if len(properties) > 0:
             contents += f'{languages[config["language"]]["PROPERTY"]} | {languages[config["language"]]["EXPECTED_TYPE"]} | {languages[config["language"]]["DESCRIPTION"]}\n--- | --- | ---\n'
@@ -181,7 +181,7 @@ def term_to_markdown(term: str, uri: str, slugs: Sluggifier, application_profile
             dict.fromkeys(flatten(breadcrumbs)[::-1]))))
 
         for super_class in super_classes:
-            indirect_properties = application_profile.filter(schemas.get_properties_with_class_as_domain(super_class))
+            indirect_properties = application_profile.filter(schemas.get_properties_with_class_as_domain(super_class), relative_to_term=term)
 
             if len(indirect_properties) > 0:
                 super_class_term = application_profile.id_to_term[super_class] if super_class in application_profile.id_to_term else super_class
